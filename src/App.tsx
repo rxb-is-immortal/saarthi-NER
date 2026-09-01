@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/layout/Header';
 import { MobileNav } from './components/layout/MobileNav';
 import { Footer } from './components/layout/Footer';
+import { AIChatbot } from './components/chat/AIChatbot';
 
 import { DashboardPage } from './pages/DashboardPage';
 import { RouteIntelligencePage } from './pages/RouteIntelligencePage';
@@ -57,6 +58,9 @@ const AppContent: React.FC = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Floating AI Chatbot */}
+      <AIChatbot />
     </div>
   );
 };
