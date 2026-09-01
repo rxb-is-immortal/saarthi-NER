@@ -1,0 +1,86 @@
+import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { AlertOctagon, CloudRain, Clock, CheckCircle2, Play, Info } from 'lucide-react';
+
+export const DemoControlsBar: React.FC = () => {
+  const { 
+    simulateLandslide, 
+    simulateHeavyRain, 
+    simulateVehicleDelay, 
+    clearRoute,
+    toastMessage 
+  } = useApp();
+
+  return (
+    <div className="w-full glass-panel border border-cyan-500/30 rounded-2xl p-3 sm:p-4 mb-6 shadow-glow-cyan transition-all">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        
+        {/* Header */}
+        <div className="flex items-center space-x-2.5">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+            <Play className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-extrabold text-slate-100 flex items-center space-x-2">
+              <span>SIH Presentation Demo Control Center</span>
+              <span className="text-[9px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
+                LIVE INTERACTIVE
+              </span>
+            </h3>
+            <p className="text-[11px] text-slate-400">
+              Click buttons to trigger real-time simulated disruptions across Leaflet map polylines, vehicle ETAs, & KPIs.
+            </p>
+          </div>
+        </div>
+
+        {/* Control Buttons */}
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <button
+            onClick={() => simulateLandslide('R-001')}
+            className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-600/80 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-500/20 border border-red-400/40 transition-transform active:scale-95"
+            title="Simulate Landslide on Guwahati-Shillong Corridor"
+          >
+            <AlertOctagon className="w-3.5 h-3.5" />
+            <span>Simulate Landslide</span>
+          </button>
+
+          <button
+            onClick={() => simulateHeavyRain('R-002')}
+            className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-600/80 hover:bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-500/20 border border-amber-400/40 transition-transform active:scale-95"
+            title="Simulate Heavy Rainfall on Tezpur Highway"
+          >
+            <CloudRain className="w-3.5 h-3.5" />
+            <span>Simulate Heavy Rain</span>
+          </button>
+
+          <button
+            onClick={() => simulateVehicleDelay('V-001')}
+            className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-500/20 border border-blue-400/40 transition-transform active:scale-95"
+            title="Simulate Shipment Delay on Vehicle V-001"
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>Delay Vehicle</span>
+          </button>
+
+          <button
+            onClick={() => clearRoute('R-001')}
+            className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/80 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 border border-emerald-400/40 transition-transform active:scale-95"
+            title="Clear Debris & Restore Corridor"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>Clear Corridor</span>
+          </button>
+        </div>
+
+      </div>
+
+      {/* Real-time Toast Feedback Notification */}
+      {toastMessage && (
+        <div className="mt-3 pt-2 border-t border-cyan-500/30 flex items-center space-x-2 text-xs font-semibold text-cyan-300 animate-pulse">
+          <Info className="w-4 h-4 text-cyan-400 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+    </div>
+  );
+};

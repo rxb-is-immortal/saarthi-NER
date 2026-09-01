@@ -1,0 +1,599 @@
+import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { 
+  AlertTriangle, 
+  CloudRain, 
+  Clock, 
+  ShieldAlert, 
+  CheckCircle2, 
+  Mountain, 
+  Shield, 
+  PhoneCall, 
+  MapPin, 
+  Radio, 
+  BadgeCheck,
+  Sliders,
+  Sparkles,
+  Layers,
+  ArrowRight
+} from 'lucide-react';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
+import weatherData from '../../data/weather.json';
+import officersData from '../../data/officers.json';
+
+export const BasicDashboard: React.FC = () => {
+  const { 
+    routes, 
+    selectedRoute, 
+    setSelectedRoute, 
+    simulateLandslide, 
+    simulateHeavyRain,
+    clearRoute,
+    simulatedTime
+  } = useApp();
+
+  const [selectedRouteId, setSelectedRouteId] = useState<string>(
+    selectedRoute?.id || routes[0]?.id || 'R-001'
+  );
+
+  // Time range toggle: '6h' | '12h' | '24h'
+  const [timeRange, setTimeRange] = useState<'6h' | '12h' | '24h'>('12h');
+
+  const route = routes.find(r => r.id === selectedRouteId) || routes[0];
+
+  // Matched Weather
+  const matchedWeather = weatherData.find(w => 
+    w.district.toLowerCase().includes(route.destination.toLowerCase()) ||
+    w.state.toLowerCase().includes(route.sector.toLowerCase()) ||
+    route.name.toLowerCase().includes(w.district.toLowerCase())
+  ) || weatherData[0];
+
+  // Matched Assigned Field Officer
+  const officer = officersData.find(o => 
+    o.id === route.assignedOfficerId ||
+    o.name.toLowerCase() === route.assignedOfficerName?.toLowerCase() ||
+    o.sector.toLowerCase().includes(route.sector.toLowerCase())
+  ) || officersData[0];
+
+  // Blockage/Landslide status
+  const isBlocked = route.status === 'blocked' || route.landslideRisk === 'BLOCKED';
+  const isAtRisk = route.status === 'at-risk' || route.landslideRisk === 'MONITOR';
+  const isClear = !isBlocked && !isAtRisk;
+
+  const currentStatusState: 'clear' | 'at-risk' | 'blocked' = isBlocked ? 'blocked' : isAtRisk ? 'at-risk' : 'clear';
+
+  // Toggle handler for 3-way status
+  const handleStatusToggle = (targetStatus: 'clear' | 'at-risk' | 'blocked') => {
+    if (targetStatus === 'blocked') {
+      simulateLandslide(route.id);
+    } else if (targetStatus === 'at-risk') {
+      simulateHeavyRain(route.id);
+    } else {
+      clearRoute(route.id);
+    }
+  };
+
+  const clearanceTimeStr = isBlocked 
+    ? (route.landslideProbability > 85 ? '5h 30m' : '3h 45m')
+    : isAtRisk 
+    ? '1h 15m' 
+    : '0 min (Clear)';
+
+  const clearancePercent = isBlocked ? 35 : isAtRisk ? 75 : 100;
+
+  // Chart 1: Dynamic Landslide Probability Forecast Data based on timeframe toggle
+  const landslideTrendData = timeRange === '6h' ? [
+    { time: '09:00', prob: Math.max(10, route.landslideProbability - 15), safe: 30 },
+    { time: '11:00', prob: Math.max(15, route.landslideProbability - 5), safe: 30 },
+    { time: '12:00 (Now)', prob: route.landslideProbability, safe: 30 },
+    { time: '13:00', prob: Math.min(98, isBlocked ? route.landslideProbability - 5 : route.landslideProbability + 2), safe: 30 },
+    { time: '15:00', prob: Math.max(10, route.landslideProbability - 20), safe: 30 },
+  ] : timeRange === '12h' ? [
+    { time: '06:00', prob: Math.max(5, route.landslideProbability - 25), safe: 30 },
+    { time: '08:00', prob: Math.max(10, route.landslideProbability - 15), safe: 30 },
+    { time: '10:00', prob: Math.max(15, route.landslideProbability - 5), safe: 30 },
+    { time: '12:00 (Now)', prob: route.landslideProbability, safe: 30 },
+    { time: '14:00', prob: Math.min(98, isBlocked ? route.landslideProbability - 10 : route.landslideProbability + 5), safe: 30 },
+    { time: '16:00', prob: Math.max(10, route.landslideProbability - 25), safe: 30 },
+    { time: '18:00', prob: Math.max(5, route.landslideProbability - 40), safe: 30 },
+  ] : [
+    { time: '00:00', prob: 15, safe: 30 },
+    { time: '04:00', prob: 25, safe: 30 },
+    { time: '08:00', prob: Math.max(10, route.landslideProbability - 15), safe: 30 },
+    { time: '12:00 (Now)', prob: route.landslideProbability, safe: 30 },
+    { time: '16:00', prob: Math.max(10, route.landslideProbability - 25), safe: 30 },
+    { time: '20:00', prob: Math.max(5, route.landslideProbability - 45), safe: 30 },
+    { time: '23:59', prob: 10, safe: 30 },
+  ];
+
+  // Chart 2: Hourly Rainfall (mm) & Temp (°C)
+  const weatherTrendData = [
+    { hour: '08:00', rain: Math.round(matchedWeather.rainfall * 0.4), temp: matchedWeather.temperature - 2 },
+    { hour: '10:00', rain: Math.round(matchedWeather.rainfall * 0.75), temp: matchedWeather.temperature - 1 },
+    { hour: '12:00', rain: matchedWeather.rainfall, temp: matchedWeather.temperature },
+    { hour: '14:00', rain: Math.round(matchedWeather.rainfall * 1.15), temp: matchedWeather.temperature + 1 },
+    { hour: '16:00', rain: Math.round(matchedWeather.rainfall * 0.8), temp: matchedWeather.temperature },
+    { hour: '18:00', rain: Math.round(matchedWeather.rainfall * 0.35), temp: matchedWeather.temperature - 2 },
+  ];
+
+  // Chart 3: Multi-Factor Risk Donut
+  const riskBreakdownData = [
+    { name: 'Landslide Hazard', value: Math.round(route.landslideProbability * 0.4), color: '#ef4444' },
+    { name: 'Monsoon Rainfall', value: Math.round(route.rainRisk * 0.3), color: '#06b6d4' },
+    { name: 'Terrain Gradient', value: 20, color: '#f59e0b' },
+    { name: 'Fog / Low Vis', value: Math.round((10 - route.visibility) * 3), color: '#8b5cf6' },
+  ];
+
+  return (
+    <div className="relative min-h-[700px] w-full overflow-hidden rounded-3xl p-4 sm:p-7 bg-slate-950 border border-white/10 shadow-2xl space-y-6">
+      
+      {/* ================= BIG BACKGROUND LOGO WATERMARK ================= */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+        <div className="relative opacity-[0.04] sm:opacity-[0.06] transform scale-125 sm:scale-150 rotate-[-8deg] text-cyan-400">
+          <svg width="650" height="650" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            <circle cx="12" cy="12" r="4" />
+          </svg>
+        </div>
+        <div className="absolute w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute right-10 bottom-10 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      </div>
+
+      {/* Foreground Content */}
+      <div className="relative z-10 space-y-6">
+        
+        {/* TOP COMPACT BAR: Brand Logo + Route Selector + Animated State Toggle */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/10">
+          
+          {/* Logo & Route Name */}
+          <div className="flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-indigo-700 p-0.5 shadow-xl shadow-cyan-500/20 flex items-center justify-center">
+              <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
+                <Mountain className="w-6 h-6 text-cyan-400" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  NER-SAARTHI
+                </h1>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  LIVE
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 font-medium">
+                {route.origin} → {route.destination} ({route.lengthKm} km)
+              </p>
+            </div>
+          </div>
+
+          {/* Right Controls: Route Select Dropdown + Animated 3-Way Status Toggle */}
+          <div className="flex flex-wrap items-center gap-3">
+            
+            {/* Route Dropdown */}
+            <select
+              value={selectedRouteId}
+              onChange={(e) => {
+                setSelectedRouteId(e.target.value);
+                const found = routes.find(r => r.id === e.target.value);
+                if (found) setSelectedRoute(found);
+              }}
+              className="bg-slate-900 text-white font-bold text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-cyan-500/40 focus:outline-none focus:ring-2 focus:ring-cyan-400 cursor-pointer shadow-lg"
+            >
+              {routes.map(r => (
+                <option key={r.id} value={r.id}>
+                  🛣️ {r.name}
+                </option>
+              ))}
+            </select>
+
+            {/* ====== ANIMATED INTERACTIVE STATUS TOGGLE SWITCH ====== */}
+            <div className="flex items-center bg-slate-900/90 p-1 rounded-2xl border border-white/15 shadow-2xl relative">
+              
+              {/* Clear Toggle */}
+              <button
+                type="button"
+                onClick={() => handleStatusToggle('clear')}
+                className={`relative z-10 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all duration-300 ${
+                  currentStatusState === 'clear'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30 scale-105'
+                    : 'text-slate-400 hover:text-emerald-300'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Clear</span>
+              </button>
+
+              {/* At-Risk Toggle */}
+              <button
+                type="button"
+                onClick={() => handleStatusToggle('at-risk')}
+                className={`relative z-10 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all duration-300 ${
+                  currentStatusState === 'at-risk'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30 scale-105'
+                    : 'text-slate-400 hover:text-amber-300'
+                }`}
+              >
+                <CloudRain className="w-3.5 h-3.5" />
+                <span>At-Risk</span>
+              </button>
+
+              {/* Blocked Landslide Toggle */}
+              <button
+                type="button"
+                onClick={() => handleStatusToggle('blocked')}
+                className={`relative z-10 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all duration-300 ${
+                  currentStatusState === 'blocked'
+                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-500/40 animate-pulse scale-105'
+                    : 'text-slate-400 hover:text-red-300'
+                }`}
+              >
+                <AlertTriangle className="w-3.5 h-3.5" />
+                <span>Blocked</span>
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* Timeframe Slider Toggle Bar for Graphs */}
+        <div className="flex items-center justify-between text-xs px-1">
+          <div className="flex items-center space-x-2 text-slate-400">
+            <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="font-semibold text-slate-300">Live Forecast Window:</span>
+          </div>
+
+          {/* Timeframe Toggle Pills */}
+          <div className="inline-flex items-center bg-slate-900/80 p-0.5 rounded-xl border border-white/10">
+            {(['6h', '12h', '24h'] as const).map((range) => (
+              <button
+                key={range}
+                onClick={() => setTimeRange(range)}
+                className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 ${
+                  timeRange === range
+                    ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {range.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ================= 4 CORE GRAPH CARDS FOR THE SELECTED ROUTE ================= */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          {/* GRAPH 1: LANDSLIDE PROBABILITY & RISK FORECAST */}
+          <div className="glass-card rounded-2xl p-5 border border-white/10 bg-slate-900/70 shadow-glass flex flex-col justify-between transition-all hover:border-white/20">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Landslide Risk Forecast</h3>
+                  <p className="text-[11px] text-slate-400">{timeRange.toUpperCase()} Slope Probability Curve</p>
+                </div>
+              </div>
+              <span className={`px-2.5 py-1 rounded-full text-xs font-extrabold border transition-all ${
+                isBlocked ? 'bg-red-500/20 text-red-300 border-red-500/50 animate-pulse' : isAtRisk ? 'bg-amber-500/20 text-amber-300 border-amber-500/50' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
+              }`}>
+                {route.landslideRisk} ({route.landslideProbability}%)
+              </span>
+            </div>
+
+            {/* Landslide Area Chart */}
+            <div className="h-48 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={landslideTrendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="landslideGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={isBlocked ? '#ef4444' : isAtRisk ? '#f59e0b' : '#10b981'} stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor={isBlocked ? '#ef4444' : isAtRisk ? '#f59e0b' : '#10b981'} stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="time" stroke="#64748b" fontSize={10} tickLine={false} />
+                  <YAxis domain={[0, 100]} stroke="#64748b" fontSize={10} tickLine={false} unit="%" />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '11px' }}
+                    formatter={(val: number) => [`${val}%`, 'Landslide Probability']}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="prob" 
+                    stroke={isBlocked ? '#ef4444' : isAtRisk ? '#f59e0b' : '#10b981'} 
+                    strokeWidth={3} 
+                    fillOpacity={1} 
+                    fill="url(#landslideGrad)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
+              <span>Safe Line: <strong>30%</strong></span>
+              <span className="font-semibold text-slate-200">Current Risk: <strong className={isBlocked ? 'text-red-400' : 'text-emerald-400'}>{route.landslideProbability}%</strong></span>
+            </div>
+          </div>
+
+          {/* GRAPH 2: WEATHER & RAINFALL INTENSITY */}
+          <div className="glass-card rounded-2xl p-5 border border-white/10 bg-slate-900/70 shadow-glass flex flex-col justify-between transition-all hover:border-white/20">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                  <CloudRain className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Weather & Precipitation</h3>
+                  <p className="text-[11px] text-slate-400">Rainfall (mm) & Temperature (°C)</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 text-xs font-bold text-cyan-300">
+                <span>{matchedWeather.rainfall} mm</span>
+                <span>•</span>
+                <span>{matchedWeather.temperature}°C</span>
+              </div>
+            </div>
+
+            {/* Weather Combined Bar & Line Chart */}
+            <div className="h-48 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={weatherTrendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="hour" stroke="#64748b" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#64748b" fontSize={10} tickLine={false} unit="mm" />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '11px' }}
+                    formatter={(val: number, name: string) => [name === 'rain' ? `${val} mm` : `${val}°C`, name === 'rain' ? 'Rainfall' : 'Temp']}
+                  />
+                  <Bar dataKey="rain" fill="#06b6d4" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="grid grid-cols-3 text-center text-xs text-slate-300 pt-2 border-t border-white/10">
+              <div>Rain: <strong className="text-cyan-300">{matchedWeather.rainProbability}%</strong></div>
+              <div>Vis: <strong className="text-blue-300">{route.visibility} km</strong></div>
+              <div>Wind: <strong className="text-emerald-300">{matchedWeather.wind} km/h</strong></div>
+            </div>
+          </div>
+
+          {/* GRAPH 3: COMPOSITE RISK MULTI-FACTOR DONUT */}
+          <div className="glass-card rounded-2xl p-5 border border-white/10 bg-slate-900/70 shadow-glass flex flex-col justify-between transition-all hover:border-white/20">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <ShieldAlert className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Route Risk Breakdown</h3>
+                  <p className="text-[11px] text-slate-400">Hazard Weight Distribution</p>
+                </div>
+              </div>
+              <span className={`text-base font-black ${
+                route.risk >= 70 ? 'text-red-400' : route.risk >= 40 ? 'text-amber-400' : 'text-emerald-400'
+              }`}>
+                {route.risk}% Risk
+              </span>
+            </div>
+
+            {/* Donut Chart with Center Text */}
+            <div className="h-48 w-full relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={riskBreakdownData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={75}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    {riskBreakdownData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '11px' }}
+                    formatter={(val: number) => [`${val}% Weight`, 'Impact']}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-2xl font-black text-white">{route.risk}%</span>
+                <span className="text-[9px] uppercase font-bold text-slate-400">Total Risk</span>
+              </div>
+            </div>
+
+            {/* Legend Pills */}
+            <div className="grid grid-cols-2 gap-1.5 text-[11px] pt-2 border-t border-white/10 text-slate-300">
+              {riskBreakdownData.map((item, idx) => (
+                <div key={idx} className="flex items-center space-x-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></span>
+                  <span className="truncate">{item.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* GRAPH 4: TIME TO GET CLEAR GAUGE & TIMELINE */}
+          <div className="glass-card rounded-2xl p-5 border border-white/10 bg-slate-900/70 shadow-glass flex flex-col justify-between transition-all hover:border-white/20">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Time to Get Clear</h3>
+                  <p className="text-[11px] text-slate-400">Clearance ETA & Road Status</p>
+                </div>
+              </div>
+              <span className="text-xs font-mono text-purple-300 font-bold">
+                Update: {route.nextUpdateMinutes}m
+              </span>
+            </div>
+
+            {/* Radial Clearance Progress Bar */}
+            <div className="h-48 w-full flex flex-col items-center justify-center">
+              <div className="text-center space-y-1">
+                <span className={`text-3xl sm:text-4xl font-black tracking-tight ${
+                  isBlocked ? 'text-red-400' : isAtRisk ? 'text-amber-400' : 'text-emerald-400'
+                }`}>
+                  {clearanceTimeStr}
+                </span>
+                <p className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  {isBlocked ? 'Active Clearance Underway' : isAtRisk ? 'Traffic Moving with Caution' : 'Highway Open & Clear'}
+                </p>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full max-w-xs mt-4 space-y-1.5">
+                <div className="flex justify-between text-[11px] text-slate-400 font-semibold">
+                  <span>Progress</span>
+                  <span>{clearancePercent}% Ready</span>
+                </div>
+                <div className="w-full bg-slate-800 rounded-full h-3 p-0.5 overflow-hidden border border-white/10">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      isBlocked ? 'bg-gradient-to-r from-red-600 to-amber-500' : isAtRisk ? 'bg-gradient-to-r from-amber-500 to-emerald-500' : 'bg-emerald-500'
+                    }`}
+                    style={{ width: `${clearancePercent}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
+              <span>Crew: <strong className="text-slate-200">{isBlocked ? 'Heavy Earthmovers on Site' : 'Patrol Verified'}</strong></span>
+              <span>Ref: <strong className="text-cyan-300">{simulatedTime}</strong></span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ================= LOCATED FIELD OFFICER ID CARD / ALL CLEAR BANNER ================= */}
+        {isBlocked || isAtRisk ? (
+          <div className="rounded-2xl p-5 border border-red-500/40 bg-gradient-to-r from-red-950/50 via-slate-900 to-slate-950 shadow-2xl relative overflow-hidden transition-all">
+            
+            {/* Top Lanyard Header */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-red-500/20 pb-3">
+              <div className="flex items-center space-x-2">
+                <Shield className="w-4 h-4 text-red-400" />
+                <span className="text-[11px] font-black uppercase tracking-widest text-red-300">
+                  MINISTRY OF DoNER • ON-SITE FIELD OFFICER DEPLOYED AT LANDSLIDE
+                </span>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-red-500 text-white animate-pulse">
+                🚨 ON-SITE ACTIVE
+              </span>
+            </div>
+
+            {/* Officer ID Card Body */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-4">
+              
+              {/* Photo & Identity */}
+              <div className="flex items-center space-x-4 md:col-span-1 border-b md:border-b-0 md:border-r border-white/10 pb-3 md:pb-0 md:pr-4">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-blue-700 p-0.5 flex items-center justify-center shadow-lg">
+                    <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center text-white font-black text-xl">
+                      {officer.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center text-white text-[9px] font-bold">
+                    ✓
+                  </span>
+                </div>
+
+                <div>
+                  <div className="flex items-center space-x-1.5">
+                    <h4 className="text-base font-black text-white">{officer.name}</h4>
+                  </div>
+                  <p className="text-xs font-bold text-red-300">{officer.rank}</p>
+                  <p className="text-[11px] text-slate-400 leading-tight">{officer.department}</p>
+                  <div className="mt-1 flex items-center space-x-2 text-[10px] text-slate-400">
+                    <span className="px-1.5 py-0.2 rounded bg-white/10 font-mono text-cyan-300">ID: {officer.id}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ground Location & Sector */}
+              <div className="space-y-1.5 text-xs text-slate-300 md:col-span-1 border-b md:border-b-0 md:border-r border-white/10 pb-3 md:pb-0 md:pr-4">
+                <div className="flex items-center space-x-1.5 text-slate-400">
+                  <MapPin className="w-3.5 h-3.5 text-red-400" />
+                  <span className="font-semibold text-white">Landslide Post: {officer.location}</span>
+                </div>
+                <div className="flex items-center space-x-1.5 text-slate-400">
+                  <Radio className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Sector: <strong className="text-slate-200">{officer.sector}</strong></span>
+                </div>
+                <div className="text-[11px] text-slate-400 pt-1">
+                  GPS: <span className="font-mono text-cyan-300">{officer.lat.toFixed(4)}° N, {officer.lng.toFixed(4)}° E</span>
+                </div>
+              </div>
+
+              {/* Live Field Note & Hotkey */}
+              <div className="space-y-2 text-xs md:col-span-1">
+                <div className="p-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-slate-300 text-[11px] leading-relaxed">
+                  <span className="font-bold text-red-300">Latest Field Dispatch:</span> "{officer.lastReport}"
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Control Line:</span>
+                  <span className="font-mono text-cyan-300 font-bold flex items-center space-x-1">
+                    <PhoneCall className="w-3 h-3 text-cyan-400" />
+                    <span>{officer.controlRoom}</span>
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        ) : (
+          /* CLEAR STATE: Reassuring Green Banner */
+          <div className="rounded-2xl p-5 border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-950 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h4 className="text-base font-black text-white">
+                    CORRIDOR IS ALL CLEAR!
+                  </h4>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    NORMAL FLOW
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 mt-0.5">
+                  No active landslide or road damage detected on this route. No emergency field officer deployment required.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 text-xs font-semibold text-emerald-300 bg-emerald-950/50 px-3.5 py-2 rounded-xl border border-emerald-500/30">
+              <BadgeCheck className="w-4 h-4 text-emerald-400" />
+              <span>Routine Radar Verified</span>
+            </div>
+          </div>
+        )}
+
+      </div>
+
+    </div>
+  );
+};
