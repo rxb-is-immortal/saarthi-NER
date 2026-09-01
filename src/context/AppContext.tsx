@@ -15,6 +15,10 @@ interface AppContextType {
   activeTab: string;
   simulatedTime: string;
   toastMessage: string | null;
+  theme: 'dark' | 'light';
+  
+  // Theme Toggle
+  toggleTheme: () => void;
   
   // Selection handlers
   setSelectedRoute: (route: RouteSegment | null) => void;
@@ -96,6 +100,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [simulatedTime, setSimulatedTime] = useState<string>('11:35 AM');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const saved = localStorage.getItem('ner_sarthi_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return 'dark';
+  });
+
+  // Apply theme to document element
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
+    }
+    localStorage.setItem('ner_sarthi_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      showToast(next === 'light' ? '☀️ Switched to Light Theme' : '🌙 Switched to Dark Theme');
+      return next;
+    });
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -331,6 +361,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeTab,
         simulatedTime,
         toastMessage,
+        theme,
+        toggleTheme,
         setSelectedRoute,
         setSelectedVehicle,
         setSelectedOfficer,

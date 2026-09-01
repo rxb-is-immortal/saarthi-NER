@@ -14,7 +14,7 @@ import { AboutPage } from './pages/AboutPage';
 import { LoginPage } from './pages/LoginPage';
 
 const AppContent: React.FC = () => {
-  const { activeTab } = useApp();
+  const { activeTab, theme } = useApp();
 
   const renderActivePage = () => {
     switch (activeTab) {
@@ -39,7 +39,11 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+      theme === 'dark'
+        ? 'bg-slate-950 text-slate-100 selection:bg-cyan-500 selection:text-white'
+        : 'bg-slate-100 text-slate-900 selection:bg-cyan-600 selection:text-white'
+    }`}>
       {/* Top Header with Operational Modules Navbar */}
       <Header />
 
