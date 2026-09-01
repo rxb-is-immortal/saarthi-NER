@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Compass, AlertTriangle } from 'lucide-react';
+import { Compass } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const { setActiveTab } = useApp();
@@ -21,10 +21,6 @@ export const Footer: React.FC = () => {
             AI-Powered Logistics & Route Accessibility Intelligence Platform for India's North Eastern Region.
             Combining terrain sensors, field officer network, driver reports, and weather analytics into one command desk.
           </p>
-          <div className="pt-2 flex items-center space-x-2 text-[11px] text-amber-700 dark:text-amber-400 font-medium">
-            <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
-            <span>DEMO DATA ONLY — Smart India Hackathon 2026 Prototype • Problem Statement 26002</span>
-          </div>
         </div>
 
         {/* Quick Nav */}
@@ -53,8 +49,8 @@ export const Footer: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
-        <p>© 2026 NER-Sarthi • Ministry of DoNER • SIH 2026 Prototype</p>
-        <p>Built for offline operational command demonstration</p>
+        <p>© 2026 NER-Sarthi • Ministry of DoNER</p>
+        <p>Operational Command Platform</p>
       </div>
     </footer>
   );
