@@ -11,7 +11,6 @@ import { LogisticsPlannerPage } from './pages/LogisticsPlannerPage';
 import { OfficersPage } from './pages/OfficersPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { ExplorePage } from './pages/ExplorePage';
-import { AboutPage } from './pages/AboutPage';
 import { LoginPage } from './pages/LoginPage';
 
 const AppContent: React.FC = () => {
@@ -29,8 +28,6 @@ const AppContent: React.FC = () => {
         return <AnalyticsPage />;
       case 'explore':
         return <ExplorePage />;
-      case 'about':
-        return <AboutPage />;
       case 'login':
       case 'subscribe':
         return <LoginPage />;

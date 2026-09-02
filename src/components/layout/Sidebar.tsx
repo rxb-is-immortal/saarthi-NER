@@ -7,7 +7,6 @@ import {
   ShieldCheck, 
   BarChart3, 
   Compass, 
-  Info, 
   Mail 
 } from 'lucide-react';
 
@@ -21,7 +20,6 @@ export const Sidebar: React.FC = () => {
     { id: 'officers', label: 'Field Officers Network', icon: ShieldCheck },
     { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3 },
     { id: 'explore', label: 'Explore Northeast', icon: Compass },
-    { id: 'about', label: 'About NER-Sarthi', icon: Info },
     { id: 'subscribe', label: 'Subscribe Updates', icon: Mail },
   ];
 

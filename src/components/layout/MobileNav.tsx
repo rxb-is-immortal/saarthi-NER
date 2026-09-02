@@ -8,7 +8,6 @@ import {
   Menu, 
   X, 
   BarChart3, 
-  Info, 
   LogIn, 
   Sun, 
   Moon 
@@ -31,7 +30,6 @@ export const MobileNav: React.FC = () => {
     { id: 'logistics', label: 'AI Logistics Planner', icon: Truck },
     { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3 },
     { id: 'explore', label: 'Explore Northeast', icon: Compass },
-    { id: 'about', label: 'About NER-Sarthi', icon: Info },
     { id: 'login', label: 'Portal Login', icon: LogIn },
   ];
 

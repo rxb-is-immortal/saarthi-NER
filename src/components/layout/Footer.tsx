@@ -41,7 +41,6 @@ export const Footer: React.FC = () => {
             <li>Ministry of Development of North Eastern Region (DoNER)</li>
             <li>Government of India</li>
             <li><button onClick={() => setActiveTab('explore')} className="hover:text-cyan-600 dark:hover:text-cyan-300 text-slate-700 dark:text-slate-300 font-medium">Explore Northeast</button></li>
-            <li><button onClick={() => setActiveTab('about')} className="hover:text-cyan-600 dark:hover:text-cyan-300 text-slate-700 dark:text-slate-300 font-medium">About NER-Sarthi</button></li>
             <li><button onClick={() => setActiveTab('login')} className="hover:text-cyan-600 dark:hover:text-cyan-300 text-slate-700 dark:text-slate-300 font-medium">Portal Login</button></li>
           </ul>
         </div>

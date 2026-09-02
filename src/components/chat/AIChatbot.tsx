@@ -251,7 +251,6 @@ export const AIChatbot: React.FC = () => {
     }
 
     if (lower.includes('about') || lower.includes('project') || lower.includes('what is ner') || lower.includes('sarthi')) {
-      setActiveTab('about');
       return {
         id: `bot-${Date.now()}`,
         sender: 'bot',
