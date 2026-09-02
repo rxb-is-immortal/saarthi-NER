@@ -97,7 +97,7 @@ export const MobileNav: React.FC = () => {
           </div>
 
           <div className="text-center text-xs text-slate-400 border-t border-white/10 pt-4">
-            <p>DoNER • SIH 2026 Problem Statement 26002</p>
+            <p>Ministry of DoNER • Government of India</p>
           </div>
         </div>
       )}

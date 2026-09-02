@@ -58,9 +58,8 @@ export const Sidebar: React.FC = () => {
       {/* DoNER Regional Card Footer */}
       <div className="glass-panel-light p-3 rounded-xl border border-white/10 text-center space-y-1.5">
         <div className="inline-block px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-          SIH 2026 Prototype
+          DoNER
         </div>
-        <p className="text-[11px] text-slate-300 font-semibold">Problem Statement 26002</p>
         <p className="text-[10px] text-slate-400">Ministry of Development of North Eastern Region</p>
       </div>
 

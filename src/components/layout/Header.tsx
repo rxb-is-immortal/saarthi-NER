@@ -77,11 +77,6 @@ export const Header: React.FC = () => {
               <span>{simulatedTime}</span>
             </div>
 
-            <span className="text-slate-300 dark:text-slate-600">|</span>
-
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30">
-              DEMO MODE
-            </span>
           </div>
 
           {/* Right Action Icons & Profile */}
