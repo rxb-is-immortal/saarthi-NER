@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { AlertOctagon, CloudRain, Clock, CheckCircle2, Play, Info } from 'lucide-react';
+import { SUPPORTED_LANGUAGES } from '../../data/translations';
+import { AlertOctagon, CloudRain, Clock, CheckCircle2, Play, Info, Globe } from 'lucide-react';
 
 export const DemoControlsBar: React.FC = () => {
   const { 
@@ -8,8 +9,11 @@ export const DemoControlsBar: React.FC = () => {
     simulateHeavyRain, 
     simulateVehicleDelay, 
     clearRoute,
-    toastMessage 
+    toastMessage,
+    currentLanguage
   } = useApp();
+
+  const currentLangObj = SUPPORTED_LANGUAGES.find(l => l.code === currentLanguage) || SUPPORTED_LANGUAGES[0];
 
   return (
     <div className="w-full glass-panel border border-cyan-500/30 rounded-2xl p-3 sm:p-4 mb-6 shadow-glow-cyan transition-all">
@@ -17,18 +21,21 @@ export const DemoControlsBar: React.FC = () => {
         
         {/* Header */}
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
             <Play className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-extrabold text-slate-100 flex items-center space-x-2">
-              <span>SIH Presentation Demo Control Center</span>
-              <span className="text-[9px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
-                LIVE INTERACTIVE
+            <div className="flex items-center space-x-2 flex-wrap">
+              <h3 className="text-xs sm:text-sm font-extrabold text-slate-100">
+                Demo Simulation Control Center
+              </h3>
+              <span className="text-[9px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30 flex items-center space-x-1">
+                <Globe className="w-2.5 h-2.5" />
+                <span>Active Language: {currentLangObj.flag} {currentLangObj.name}</span>
               </span>
-            </h3>
+            </div>
             <p className="text-[11px] text-slate-400">
-              Click buttons to trigger real-time simulated disruptions across Leaflet map polylines, vehicle ETAs, & KPIs.
+              Trigger live simulated emergencies broadcast across the Map, Emergency Banner & Notification Center in {currentLangObj.name} ({currentLangObj.nativeName}).
             </p>
           </div>
         </div>
@@ -36,24 +43,27 @@ export const DemoControlsBar: React.FC = () => {
         {/* Control Buttons */}
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <button
+            type="button"
             onClick={() => simulateLandslide('R-001')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-600/80 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-500/20 border border-red-400/40 transition-transform active:scale-95"
-            title="Simulate Landslide on Guwahati-Shillong Corridor"
+            title="Simulate Landslide Warning"
           >
             <AlertOctagon className="w-3.5 h-3.5" />
-            <span>Simulate Landslide</span>
+            <span>Landslide Alert</span>
           </button>
 
           <button
+            type="button"
             onClick={() => simulateHeavyRain('R-002')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-600/80 hover:bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-500/20 border border-amber-400/40 transition-transform active:scale-95"
-            title="Simulate Heavy Rainfall on Tezpur Highway"
+            title="Simulate Heavy Monsoon Downpour"
           >
             <CloudRain className="w-3.5 h-3.5" />
-            <span>Simulate Heavy Rain</span>
+            <span>Heavy Rain Alert</span>
           </button>
 
           <button
+            type="button"
             onClick={() => simulateVehicleDelay('V-001')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-500/20 border border-blue-400/40 transition-transform active:scale-95"
             title="Simulate Shipment Delay on Vehicle V-001"
@@ -63,6 +73,7 @@ export const DemoControlsBar: React.FC = () => {
           </button>
 
           <button
+            type="button"
             onClick={() => clearRoute('R-001')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/80 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 border border-emerald-400/40 transition-transform active:scale-95"
             title="Clear Debris & Restore Corridor"

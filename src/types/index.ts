@@ -160,3 +160,31 @@ export interface LogisticsAnalysisResult {
   }[];
   explanation: string;
 }
+
+export type AlertLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+
+export interface AppNotification {
+  id: string;
+  alertKey: string;
+  severity: AlertLevel;
+  titleKey: string;
+  messageKey: string;
+  customTitle?: string;
+  customMessage?: string;
+  region: string;
+  routeId?: string;
+  routeName?: string;
+  timestamp: string;
+  read: boolean;
+}
+
+export interface EmergencyAlert {
+  id: string;
+  alertKey: string;
+  severity: AlertLevel;
+  region: string;
+  routeName: string;
+  timestamp: string;
+  autoDismissMs?: number;
+}
+

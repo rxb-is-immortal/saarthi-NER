@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { LanguageSelector } from './LanguageSelector';
+import { NotificationCenter } from './NotificationCenter';
 import { 
   LayoutDashboard, 
   MapPin, 
@@ -35,12 +37,13 @@ export const MobileNav: React.FC = () => {
 
   return (
     <>
-      {/* Mobile Top Header Bar with Hamburger Menu & Theme Toggle */}
-      <div className="lg:hidden flex items-center justify-between glass-panel px-4 py-2 border-b border-slate-200 dark:border-white/10 sticky top-[65px] z-[1900] transition-colors duration-300">
-        <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold text-cyan-700 dark:text-cyan-400">NER-Sarthi Ops</span>
+      {/* Mobile Top Header Bar with Language Selector & Hamburger Menu */}
+      <div className="lg:hidden flex items-center justify-between glass-panel px-3 py-2 border-b border-slate-200 dark:border-white/10 sticky top-[62px] z-[1900] transition-colors duration-300">
+        <div className="flex items-center space-x-1.5">
+          <LanguageSelector compact={true} />
         </div>
         <div className="flex items-center space-x-2">
+          <NotificationCenter />
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-lg glass-panel-light text-slate-700 dark:text-slate-200 hover:text-cyan-600 dark:hover:text-cyan-400"

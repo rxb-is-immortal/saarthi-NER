@@ -1,8 +1,9 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { LanguageSelector } from './LanguageSelector';
+import { NotificationCenter } from './NotificationCenter';
 import { 
   Shield, 
-  Bell, 
   Clock, 
   Compass, 
   LayoutDashboard, 
@@ -13,9 +14,10 @@ import {
   Sun, 
   Moon 
 } from 'lucide-react';
+import { getUIText } from '../../data/translations';
 
 export const Header: React.FC = () => {
-  const { simulatedTime, activeTab, setActiveTab, theme, toggleTheme } = useApp();
+  const { simulatedTime, activeTab, setActiveTab, theme, toggleTheme, currentLanguage } = useApp();
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -66,7 +68,7 @@ export const Header: React.FC = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
-                System Operational
+                {getUIText('systemOperational', currentLanguage)}
               </span>
             </div>
 
@@ -79,10 +81,16 @@ export const Header: React.FC = () => {
 
           </div>
 
-          {/* Right Action Icons & Profile */}
-          <div className="flex items-center space-x-2.5">
+          {/* Right Action Icons: Language Selector, Notification Center, Theme Switcher & Profile */}
+          <div className="flex items-center space-x-2 sm:space-x-2.5">
             
-            {/* ====== CLEAN ICON-ONLY THEME TOGGLE: MOON & SUN ====== */}
+            {/* Global Language Selector */}
+            <LanguageSelector />
+
+            {/* Notification Center with Unread Badge */}
+            <NotificationCenter />
+
+            {/* Theme Toggle: Sun / Moon */}
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-xl border transition-all duration-300 shadow-sm flex items-center justify-center ${
@@ -100,20 +108,12 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-            <button
-              onClick={() => setActiveTab('routes')}
-              className="relative p-2 rounded-xl glass-panel-light text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
-              title="Live Alert Ticker"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            </button>
-
-            <div className="flex items-center space-x-2 glass-panel-light pl-2 pr-3 py-1 rounded-xl border border-slate-200 dark:border-white/10">
+            {/* Control Room / DoNER Tag */}
+            <div className="hidden sm:flex items-center space-x-2 glass-panel-light pl-2 pr-3 py-1 rounded-xl border border-slate-200 dark:border-white/10">
               <div className="w-6 h-6 rounded-lg bg-blue-600 flex items-center justify-center text-white">
                 <Shield className="w-3.5 h-3.5" />
               </div>
-              <div className="text-left hidden sm:block">
+              <div className="text-left hidden md:block">
                 <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-tight">Control Room</p>
                 <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">DoNER Ops</p>
               </div>
