@@ -149,24 +149,6 @@ export const BasicDashboard: React.FC = () => {
                     border border-slate-200 dark:border-white/10
                     text-slate-900 dark:text-slate-100">
 
-      {/* ═══════════════════  BACKGROUND WATERMARK LOGO  ═══════════════════ */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
-        <div className="relative transform scale-125 sm:scale-150 rotate-[-8deg] opacity-[0.06] dark:opacity-[0.04] text-slate-700 dark:text-cyan-400">
-          <svg width="650" height="650" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            <circle cx="12" cy="12" r="4" />
-          </svg>
-        </div>
-        {isDark && (
-          <>
-            <div className="absolute w-[500px] h-[500px] bg-cyan-500/8 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute right-10 bottom-10 w-[400px] h-[400px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none" />
-          </>
-        )}
-      </div>
-
       {/* ═══════════════════  FOREGROUND CONTENT  ═══════════════════════════ */}
       <div className="relative z-10 space-y-6">
 
