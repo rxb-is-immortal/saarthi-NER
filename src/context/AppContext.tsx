@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { RouteSegment, Vehicle, FieldOfficer, DisruptionAlert, AppNotification, EmergencyAlert, AlertLevel } from '../types';
-import { LanguageCode } from '../data/translations';
+import { LanguageCode, getUIText } from '../data/translations';
 import routesData from '../data/routes.json';
 import vehiclesData from '../data/vehicles.json';
 import officersData from '../data/officers.json';
@@ -21,6 +21,7 @@ interface AppContextType {
   // Regional Language Support
   currentLanguage: LanguageCode;
   setCurrentLanguage: (lang: LanguageCode) => void;
+  t: (key: string, fallback?: string) => string;
   
   // Notification Center
   notifications: AppNotification[];
@@ -189,6 +190,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setCurrentLanguage = (lang: LanguageCode) => {
     setCurrentLanguageState(lang);
     localStorage.setItem('ner_sarthi_lang', lang);
+  };
+
+  const t = (key: string, fallback?: string): string => {
+    return getUIText(key, currentLanguage, fallback);
   };
 
   // Notification Center State
@@ -567,6 +572,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         theme,
         currentLanguage,
         setCurrentLanguage,
+        t,
         notifications,
         unreadNotificationCount,
         markNotificationAsRead,

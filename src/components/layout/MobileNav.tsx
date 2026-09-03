@@ -16,23 +16,23 @@ import {
 } from 'lucide-react';
 
 export const MobileNav: React.FC = () => {
-  const { activeTab, setActiveTab, theme, toggleTheme } = useApp();
+  const { activeTab, setActiveTab, theme, toggleTheme, t } = useApp();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const bottomNavItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'routes', label: 'Routes', icon: MapPin },
-    { id: 'logistics', label: 'Logistics', icon: Truck },
-    { id: 'login', label: 'Login', icon: LogIn },
+    { id: 'dashboard', label: t('dashboard', 'Dashboard'), icon: LayoutDashboard },
+    { id: 'routes', label: t('routes', 'Routes'), icon: MapPin },
+    { id: 'logistics', label: t('logistics', 'Logistics'), icon: Truck },
+    { id: 'login', label: t('login', 'Login'), icon: LogIn },
   ];
 
   const fullNavItems = [
-    { id: 'dashboard', label: 'Command Dashboard', icon: LayoutDashboard },
-    { id: 'routes', label: 'Route Intelligence', icon: MapPin },
-    { id: 'logistics', label: 'AI Logistics Planner', icon: Truck },
-    { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3 },
-    { id: 'explore', label: 'Explore Northeast', icon: Compass },
-    { id: 'login', label: 'Portal Login', icon: LogIn },
+    { id: 'dashboard', label: t('dashboard', 'Command Dashboard'), icon: LayoutDashboard },
+    { id: 'routes', label: t('routes', 'Route Intelligence'), icon: MapPin },
+    { id: 'logistics', label: t('logistics', 'AI Logistics Planner'), icon: Truck },
+    { id: 'analytics', label: t('analytics', 'Analytics & Reports'), icon: BarChart3 },
+    { id: 'explore', label: t('explore', 'Explore Northeast'), icon: Compass },
+    { id: 'login', label: t('login', 'Portal Login'), icon: LogIn },
   ];
 
   return (
@@ -65,7 +65,9 @@ export const MobileNav: React.FC = () => {
         <div className="lg:hidden fixed inset-0 z-[2500] bg-slate-900/80 dark:bg-slate-950/80 backdrop-blur-md flex flex-col justify-between p-6">
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-slate-200/20 dark:border-white/10 pb-4">
-              <h2 className="text-lg font-bold text-cyan-400">Operational Navigation</h2>
+              <h2 className="text-lg font-bold text-cyan-400">
+                {t('navigation', 'Operational Navigation')}
+              </h2>
               <button
                 onClick={() => setDrawerOpen(false)}
                 className="p-2 rounded-lg bg-white/10 text-slate-200"
@@ -100,7 +102,7 @@ export const MobileNav: React.FC = () => {
           </div>
 
           <div className="text-center text-xs text-slate-400 border-t border-white/10 pt-4">
-            <p>Ministry of DoNER • Government of India</p>
+            <p>{t('ministryName', 'Ministry of DoNER • Government of India')}</p>
           </div>
         </div>
       )}

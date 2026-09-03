@@ -14,18 +14,17 @@ import {
   Sun, 
   Moon 
 } from 'lucide-react';
-import { getUIText } from '../../data/translations';
 
 export const Header: React.FC = () => {
-  const { simulatedTime, activeTab, setActiveTab, theme, toggleTheme, currentLanguage } = useApp();
+  const { simulatedTime, activeTab, setActiveTab, theme, toggleTheme, t } = useApp();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'routes', label: 'Route Intelligence', icon: MapPin },
-    { id: 'logistics', label: 'AI Logistics Planner', icon: Truck },
-    { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3 },
-    { id: 'explore', label: 'Explore Northeast', icon: Compass },
-    { id: 'login', label: 'Login', icon: LogIn },
+    { id: 'dashboard', label: t('dashboard', 'Dashboard'), icon: LayoutDashboard },
+    { id: 'routes', label: t('routes', 'Route Intelligence'), icon: MapPin },
+    { id: 'logistics', label: t('logistics', 'AI Logistics Planner'), icon: Truck },
+    { id: 'analytics', label: t('analytics', 'Analytics & Reports'), icon: BarChart3 },
+    { id: 'explore', label: t('explore', 'Explore Northeast'), icon: Compass },
+    { id: 'login', label: t('login', 'Portal Login'), icon: LogIn },
   ];
 
   return (
@@ -54,7 +53,7 @@ export const Header: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium hidden md:block">
-                  AI-Powered Logistics & Accessibility Intelligence • North East India
+                  {t('nerSarthiSubtitle', 'AI-Powered Logistics & Accessibility Intelligence • North East India')}
                 </p>
               </div>
             </div>
@@ -68,7 +67,7 @@ export const Header: React.FC = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
-                {getUIText('systemOperational', currentLanguage)}
+                {t('systemOperational', 'System Operational')}
               </span>
             </div>
 
@@ -114,8 +113,12 @@ export const Header: React.FC = () => {
                 <Shield className="w-3.5 h-3.5" />
               </div>
               <div className="text-left hidden md:block">
-                <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-tight">Control Room</p>
-                <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">DoNER Ops</p>
+                <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-tight">
+                  {t('controlRoom', 'Control Room')}
+                </p>
+                <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">
+                  {t('donerOps', 'DoNER Ops')}
+                </p>
               </div>
             </div>
           </div>

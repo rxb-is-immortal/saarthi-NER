@@ -10,7 +10,8 @@ export const DemoControlsBar: React.FC = () => {
     simulateVehicleDelay, 
     clearRoute,
     toastMessage,
-    currentLanguage
+    currentLanguage,
+    t
   } = useApp();
 
   const currentLangObj = SUPPORTED_LANGUAGES.find(l => l.code === currentLanguage) || SUPPORTED_LANGUAGES[0];
@@ -27,15 +28,15 @@ export const DemoControlsBar: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 flex-wrap">
               <h3 className="text-xs sm:text-sm font-extrabold text-slate-100">
-                Demo Simulation Control Center
+                {t('demoControlCenter', 'Demo Simulation Control Center')}
               </h3>
               <span className="text-[9px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30 flex items-center space-x-1">
                 <Globe className="w-2.5 h-2.5" />
-                <span>Active Language: {currentLangObj.flag} {currentLangObj.name}</span>
+                <span>{t('language', 'Language')}: {currentLangObj.flag} {currentLangObj.name}</span>
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Trigger live simulated emergencies broadcast across the Map, Emergency Banner & Notification Center in {currentLangObj.name} ({currentLangObj.nativeName}).
+              {t('demoDescription', 'Trigger live simulated emergencies broadcast across the Map, Emergency Banner & Notification Center in selected language.')}
             </p>
           </div>
         </div>
@@ -46,40 +47,40 @@ export const DemoControlsBar: React.FC = () => {
             type="button"
             onClick={() => simulateLandslide('R-001')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-600/80 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-500/20 border border-red-400/40 transition-transform active:scale-95"
-            title="Simulate Landslide Warning"
+            title={t('simulateLandslide', 'Simulate Landslide')}
           >
             <AlertOctagon className="w-3.5 h-3.5" />
-            <span>Landslide Alert</span>
+            <span>{t('simulateLandslide', 'Landslide Alert')}</span>
           </button>
 
           <button
             type="button"
             onClick={() => simulateHeavyRain('R-002')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-600/80 hover:bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-500/20 border border-amber-400/40 transition-transform active:scale-95"
-            title="Simulate Heavy Monsoon Downpour"
+            title={t('simulateHeavyRain', 'Simulate Heavy Rain')}
           >
             <CloudRain className="w-3.5 h-3.5" />
-            <span>Heavy Rain Alert</span>
+            <span>{t('simulateHeavyRain', 'Heavy Rain Alert')}</span>
           </button>
 
           <button
             type="button"
             onClick={() => simulateVehicleDelay('V-001')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-500/20 border border-blue-400/40 transition-transform active:scale-95"
-            title="Simulate Shipment Delay on Vehicle V-001"
+            title={t('delayVehicle', 'Delay Vehicle')}
           >
             <Clock className="w-3.5 h-3.5" />
-            <span>Delay Vehicle</span>
+            <span>{t('delayVehicle', 'Delay Vehicle')}</span>
           </button>
 
           <button
             type="button"
             onClick={() => clearRoute('R-001')}
             className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/80 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 border border-emerald-400/40 transition-transform active:scale-95"
-            title="Clear Debris & Restore Corridor"
+            title={t('clearCorridor', 'Clear Corridor')}
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Clear Corridor</span>
+            <span>{t('clearCorridor', 'Clear Corridor')}</span>
           </button>
         </div>
 

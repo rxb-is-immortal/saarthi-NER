@@ -11,7 +11,7 @@ import { OfficerDetailsDrawer } from '../components/dashboard/OfficerDetailsDraw
 import { BarChart3, Map as MapIcon } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
-  const { theme } = useApp();
+  const { t } = useApp();
   const [viewMode, setViewMode] = useState<'basic' | 'advanced'>('basic');
 
   return (
@@ -22,7 +22,7 @@ export const DashboardPage: React.FC = () => {
         <div className="flex items-center space-x-2">
           <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-ping"></span>
           <span className="text-xs font-black tracking-wider uppercase text-cyan-700 dark:text-cyan-400">
-            {viewMode === 'basic' ? 'Basic Route Dashboard' : 'Operational Map View'}
+            {viewMode === 'basic' ? t('basicDashboard', 'Basic Route Dashboard') : t('mapView', 'Operational Map View')}
           </span>
         </div>
 
@@ -46,7 +46,7 @@ export const DashboardPage: React.FC = () => {
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
-            <span>Basic Graphs</span>
+            <span>{t('basicGraphs', 'Basic Graphs')}</span>
           </button>
 
           {/* Toggle Option 2: Full Map Ops */}
@@ -58,7 +58,7 @@ export const DashboardPage: React.FC = () => {
             }`}
           >
             <MapIcon className="w-3.5 h-3.5" />
-            <span>Full Map Ops</span>
+            <span>{t('fullMapOps', 'Full Map Ops')}</span>
           </button>
         </div>
       </div>

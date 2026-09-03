@@ -3,55 +3,55 @@ import { useApp } from '../../context/AppContext';
 import { Truck, AlertTriangle, ShieldAlert, Clock, TrendingUp, TrendingDown } from 'lucide-react';
 
 export const KPICards: React.FC = () => {
-  const { kpiStats } = useApp();
+  const { kpiStats, t } = useApp();
 
   const cards = [
     {
       id: 'active-shipments',
-      label: 'Active Shipments',
+      label: t('activeShipments', 'Active Shipments'),
       value: kpiStats.activeShipments,
-      unit: 'Units on Route',
+      unit: t('onRouteRealTime', 'Units on Route'),
       icon: Truck,
       color: 'from-cyan-500/20 to-blue-600/30',
       borderColor: 'border-cyan-500/30',
       iconColor: 'text-cyan-400',
-      trend: '+12% from yesterday',
+      trend: '+12%',
       isUp: true
     },
     {
       id: 'delayed-shipments',
-      label: 'Delayed Shipments',
+      label: t('delayedShipments', 'Delayed Shipments'),
       value: kpiStats.delayedShipments,
-      unit: 'Corridor Bottlenecks',
+      unit: t('dueToWeather', 'Corridor Bottlenecks'),
       icon: AlertTriangle,
       color: 'from-amber-500/20 to-orange-600/30',
       borderColor: 'border-amber-500/30',
       iconColor: 'text-amber-400',
-      trend: '-2 since 08:00 AM',
+      trend: '-2',
       isUp: false
     },
     {
       id: 'high-risk-routes',
-      label: 'High-Risk Routes',
+      label: t('highRiskRoutes', 'High-Risk Routes'),
       value: kpiStats.highRiskRoutes,
-      unit: 'Monitored Corridors',
+      unit: t('riskExceedsThreshold', 'Monitored Corridors'),
       icon: ShieldAlert,
       color: 'from-red-500/20 to-rose-700/30',
       borderColor: 'border-red-500/30',
       iconColor: 'text-red-400',
-      trend: '3 Blocked • 5 Monitor',
+      trend: '3 Blocked',
       isUp: true
     },
     {
       id: 'avg-time-saved',
-      label: 'Avg Time Saved',
+      label: t('avgTimeSaved', 'Avg Time Saved'),
       value: kpiStats.avgTimeSaved,
-      unit: 'Per Rerouted Convoy',
+      unit: t('aiOptimization', 'Per Rerouted Convoy'),
       icon: Clock,
       color: 'from-emerald-500/20 to-teal-700/30',
       borderColor: 'border-emerald-500/30',
       iconColor: 'text-emerald-400',
-      trend: '+45m vs standard route',
+      trend: '+45m',
       isUp: true
     }
   ];
@@ -79,7 +79,7 @@ export const KPICards: React.FC = () => {
             </div>
 
             <div className="mt-2 flex items-center justify-between text-[11px] pt-2 border-t border-white/10">
-              <span className="text-slate-400 font-medium">{card.unit}</span>
+              <span className="text-slate-400 font-medium truncate max-w-[120px]">{card.unit}</span>
               <span className={`flex items-center space-x-1 font-semibold ${card.iconColor}`}>
                 {card.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                 <span className="truncate">{card.trend}</span>
